@@ -4,28 +4,7 @@
 import React from 'react'
 import {useLocalStorageState} from '../utils'
 
-function Board() {
-  const [squares, setSquares] = useLocalStorageState(
-    'squares',
-    Array(9).fill(null),
-  )
-  const winner = calculateWinner(squares)
-  const nextValue = calculateNextValue(squares)
-  const status = calculateStatus(winner, squares, nextValue)
-
-  function selectSquare(square) {
-    if (squares[square] || winner) return
-
-    const currentSquares = [...squares]
-    currentSquares[square] = nextValue
-
-    setSquares(currentSquares)
-  }
-
-  function restart() {
-    setSquares(Array(9).fill(null))
-  }
-
+function Board({squares, selectSquare}) {
   function renderSquare(i) {
     return (
       <button className="square" onClick={() => selectSquare(i)}>
@@ -36,7 +15,6 @@ function Board() {
 
   return (
     <div>
-      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -52,18 +30,58 @@ function Board() {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
-      <button className="restart" onClick={restart}>
-        restart
-      </button>
     </div>
   )
 }
 
 function Game() {
+  const [squares, setSquares] = useLocalStorageState(
+    'squares',
+    Array(9).fill(null),
+  )
+  const [moves, setMoves] = useLocalStorageState('moves', [])
+  const winner = calculateWinner(squares)
+  const nextValue = calculateNextValue(squares)
+  const status = calculateStatus(winner, squares, nextValue)
+
+  function selectSquare(square) {
+    if (squares[square] || winner) return
+
+    const currentSquares = [...squares]
+    currentSquares[square] = nextValue
+
+    setSquares(currentSquares)
+    const currentMoves = [...moves, currentSquares]
+    setMoves(currentMoves)
+    console.log(currentMoves)
+  }
+
+  function restart() {
+    setSquares(Array(9).fill(null))
+    setMoves([])
+  }
+
+  function handleMoveClick(index) {
+    setSquares(moves[index])
+  }
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board selectSquare={selectSquare} squares={squares} />
+        <button className="restart" onClick={restart}>
+          restart
+        </button>
+      </div>
+      <div className="game-info">
+        <div>{status}</div>
+        <ol style={{display: 'flex', flexDirection: 'column'}}>
+          {moves.map((move, index) => (
+            <button key={index} onClick={() => handleMoveClick(index)}>
+              {index}
+            </button>
+          ))}
+        </ol>
       </div>
     </div>
   )
