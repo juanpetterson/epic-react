@@ -42,9 +42,20 @@ function pokemonCacheReducer(state, action) {
   }
 }
 
+function usePokemonCache() {
+  const context = React.useContext(PokemonCacheContext)
+  if (!context) {
+    throw new Error(
+      'usePokemonCache must be used within a PokemonCacheProvider',
+    )
+  }
+  return context
+}
+
 function PokemonInfo({pokemonName}) {
   // 🐨 get the cache and dispatch from useContext with PokemonCacheContext
-  const [cache, dispatch] = React.useContext(PokemonCacheContext)
+  // const [cache, dispatch] = React.useContext(PokemonCacheContext)
+  const [cache, dispatch] = usePokemonCache()
 
   const {data: pokemon, status, error, run, setData} = useAsync()
 
@@ -61,7 +72,7 @@ function PokemonInfo({pokemonName}) {
         }),
       )
     }
-  }, [cache, pokemonName, run, setData])
+  }, [cache, dispatch, pokemonName, run, setData])
 
   if (status === 'idle') {
     return 'Submit a pokemon'
