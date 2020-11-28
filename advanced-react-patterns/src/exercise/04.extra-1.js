@@ -14,11 +14,12 @@ function useToggle() {
 
 function App() {
   const {on, togglerProps} = useToggle()
+  const props = {...togglerProps, onClick: () => console.info('onButtonClick')}
   return (
     <div>
       <Switch on={on} {...togglerProps} />
       <hr />
-      <button aria-label="custom-button" {...togglerProps}>
+      <button aria-label="custom-button" {...props}>
         {on ? 'on' : 'off'}
       </button>
     </div>
