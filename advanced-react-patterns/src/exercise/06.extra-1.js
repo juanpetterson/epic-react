@@ -74,6 +74,10 @@ function useToggle({
 }
 
 function Toggle({on: controlledOn, onChange}) {
+  if (controlledOn && !onChange) {
+    console.log(`Warning: using value 'on' without a valid 'onChange' function`)
+  }
+
   const {on, getTogglerProps} = useToggle({on: controlledOn, onChange})
   const props = getTogglerProps({on})
   return <Switch {...props} />

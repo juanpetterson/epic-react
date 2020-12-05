@@ -2,6 +2,7 @@
 // http://localhost:3000/isolated/exercise/06.js
 
 import * as React from 'react'
+import warning from 'warning'
 import {Switch} from '../switch'
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn?.(...args))
@@ -74,6 +75,15 @@ function useToggle({
 }
 
 function Toggle({on: controlledOn, onChange}) {
+  warning(
+    controlledOn && !onChange,
+    `Warning: using value 'on' without a valid 'onChange' function`,
+  )
+  warning(
+    controlledOn === undefined || controlledOn === null,
+    `Warning: the 'on' prop must be truthy`,
+  )
+
   const {on, getTogglerProps} = useToggle({on: controlledOn, onChange})
   const props = getTogglerProps({on})
   return <Switch {...props} />
